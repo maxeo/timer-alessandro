@@ -6,11 +6,11 @@ networks:
 services:
   webserver:
     working_dir: /usr/src/app
-    #image: maxeo90/web-dev:web-dev-php-8-0-base
-    # docker pull maxeo90/web-dev:web-dev-php-8-0-base
-    build:
-      context: ./
-      dockerfile: dockerconfig/webserver/Dockerfile
+    image: maxeo90/web-dev:node-js-base
+    # docker pull maxeo90/web-dev:node-js-base
+    #build:
+    #  context: ./
+    #  dockerfile: dockerconfig/webserver/Dockerfile
     volumes:
       - ./app:/usr/src/app
       - ./dockerconfig/webserver/docker-run:/docker-run
