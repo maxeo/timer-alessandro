@@ -1,0 +1,11 @@
+# Analyze difference of sql files
+*.sql diff
+# LF for sh file
+*.sh -crlf
+eol=lf
+
+#laravel
+* text=auto
+*.css linguist-vendored
+*.scss linguist-vendored
+*.js linguist-vendored

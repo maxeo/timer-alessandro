@@ -1,0 +1,27 @@
+ <VirtualHost *:80>
+
+ 	ServerName local.docker
+
+ 	ProxyPass / http://webserver:{RP_PORT_PROXY}/
+    ProxyPassReverse / http://webserver:{RP_PORT_PROXY}/
+    ProxyPreserveHost On
+
+ 	ErrorLog ${APACHE_LOG_DIR}/error.log
+ 	CustomLog ${APACHE_LOG_DIR}/access.log combined
+ </VirtualHost>
+
+
+ <VirtualHost *:443>
+     ServerName local.docker
+
+     ProxyPass / http://webserver:{RP_PORT_PROXY}/
+     ProxyPassReverse / http://webserver:{RP_PORT_PROXY}/
+     ProxyPreserveHost On
+
+     SSLEngine on
+     SSLCertificateFile "/dockerconfig/cert/local/localhost.crt"
+     SSLCertificateKeyFile "/dockerconfig/cert/local/localhost.key"
+
+ 	 ErrorLog ${APACHE_LOG_DIR}/error.log
+ 	 CustomLog ${APACHE_LOG_DIR}/access.log combined
+ </VirtualHost>

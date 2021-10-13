@@ -1,0 +1,42 @@
+version: '3'
+
+networks:
+  dev_proxy_network:
+
+services:
+  webserver:
+    working_dir: /usr/src/app
+    #image: maxeo90/web-dev:web-dev-php-8-0-base
+    # docker pull maxeo90/web-dev:web-dev-php-8-0-base
+    build:
+      context: ./
+      dockerfile: dockerconfig/webserver/Dockerfile
+    volumes:
+      - ./app:/usr/src/app
+      - ./dockerconfig/webserver/docker-run:/docker-run
+    environment:
+      - 'TZ=Europe/Rome'
+    networks:
+      - dev_proxy_network
+
+
+  reverse_proxy:
+    image: maxeo90/web-dev:dev-reverse-proxy-apache
+    # docker pull maxeo90/web-dev:dev-reverse-proxy-apache
+    #build:
+    #  context: ./
+    #  dockerfile: dockerconfig/reverse_proxy/Dockerfile
+    volumes:
+      - ./dockerconfig/reverse_proxy/cert:/dockerconfig/cert
+      - ./dockerconfig/reverse_proxy/apache/sites-available:/etc/apache2/sites-available
+      - ./dockerconfig/reverse_proxy/docker-run:/docker-run
+    environment:
+      RP_PORT_FROM: '${RP_PORT_FROM}'
+      RP_PORT_FROM_SSL: '${RP_PORT_FROM_SSL}'
+      RP_PORT_PROXY: '${RP_PORT_PROXY}'
+      TZ: 'Europe/Rome'
+    networks:
+      - dev_proxy_network
+    ports:
+      - "${RP_PORT_FROM}:80"
+      - "${RP_PORT_FROM_SSL}:443"
