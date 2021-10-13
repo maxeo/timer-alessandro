@@ -158,10 +158,10 @@ $(document).ready(() => {
 
         },
         isApp() {
-            if (typeof chrome != 'undefined' && typeof chrome.app.window != 'undefined') {
-                return true;
+            if (typeof chrome === 'undefined' || typeof chrome.app === 'undefined' || typeof chrome.app.window === 'undefined') {
+                return false;
             }
-            return false;
+            return true;
         },
         events: {
             /* Mostra la sezione desiderata e nasconde le altre */
