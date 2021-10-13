@@ -366,7 +366,7 @@ $(document).ready(() => {
             /* Rende le funzioni per l'app compatibili anche sui browser tradizionali */
             multiApp() {
                 let chromeMulti;
-                if (typeof chrome == 'undefined' || typeof chrome.app.window == 'undefined') {
+                if (typeof chrome === 'undefined' || typeof chrome.app === 'undefined' || typeof chrome.app.window === 'undefined') {
                     //chrome.app.window.create
                     let chromeFire = {
                         'storage': {
