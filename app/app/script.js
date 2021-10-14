@@ -47,8 +47,11 @@ $(document).ready(() => {
             let app_id = undefined;
             let chromeMulti = pgMng.utility.multiApp();
 
-
-            pgMng.data = window.sessionStorage.data == undefined ? {} : JSON.parse(window.sessionStorage.data);
+            if (pgMng.isApp()) {
+                pgMng.data = window.sessionStorage.data == undefined ? {} : JSON.parse(window.localStorage.data);
+            } else {
+                pgMng.data = window.localStorage.data == undefined ? {} : JSON.parse(window.localStorage.data);
+            }
 
 
             chromeMulti.storage.sync.get(['key'], r => {
@@ -149,7 +152,13 @@ $(document).ready(() => {
         },
         /* Imposta le letiabili nella sessione utente */
         updateStorage() {
-            window.sessionStorage.data = JSON.stringify(this.data);
+            if (pgMng.isApp()) {
+                window.sessionStorage.data = JSON.stringify(this.data);
+            } else {
+                window.localStorage.data = JSON.stringify(this.data);
+            }
+
+
             //if is app
             if (pgMng.isApp()) {
                 let chromeMulti = pgMng.utility.multiApp();
@@ -376,7 +385,7 @@ $(document).ready(() => {
             /* Rende le funzioni per l'app compatibili anche sui browser tradizionali */
             multiApp() {
                 let chromeMulti;
-                if (typeof chrome === 'undefined' || typeof chrome.app === 'undefined' || typeof chrome.app.window === 'undefined') {
+                if (!pgMng.isApp()) {
                     //chrome.app.window.create
                     let chromeFire = {
                         'storage': {
@@ -416,7 +425,7 @@ $(document).ready(() => {
             },
             /* Apre una nuova finestra e passa dati */
             windowOpen(url, id_target = undefined, extra = undefined) {
-                if (pgMng.get('isApp') === true) {
+                if (pgMng.isApp()) {
                     if (id_target === undefined) {
                         chrome.app.window.create(url);
                     } else {
@@ -440,7 +449,7 @@ $(document).ready(() => {
             },
             /* Se applicativo avvia una nuova finestra  */
             openNewAppWindow(url, id) {
-                if (pgMng.get('isApp')) {
+                if (pgMng.isApp()) {
                     let chromeMulti = pgMng.utility.multiApp();
                     id = id === undefined ? null : id;
                     chromeMulti.app.window.create(url, {
@@ -454,7 +463,7 @@ $(document).ready(() => {
                 if (typeof exception_close == 'string') {
                     exception_close = [exception_close];
                 }
-                if (pgMng.get('isApp')) {
+                if (pgMng.isApp()) {
                     let win = chrome.app.window.getAll()
                     for (let index in win) {
                         if (exception_close !== undefined && exception_close.length > 0) {
@@ -603,7 +612,7 @@ $(document).ready(() => {
     });
 
 
-    if (pgMng.get('isApp')) {
+    if (pgMng.isApp()) {
         $('body').on('click', '[data-window="link"]', () => {
             let id = $(this).attr('target') === undefined ? '_blank' : $(this).attr('target');
             pgMng.utility.openNewAppWindow($(this).attr('href'), id);
