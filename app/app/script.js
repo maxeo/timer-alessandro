@@ -48,9 +48,9 @@ $(document).ready(() => {
             let chromeMulti = pgMng.utility.multiApp();
 
             if (pgMng.isApp()) {
-                pgMng.data = window.sessionStorage.data == undefined ? {} : JSON.parse(window.localStorage.data);
+                pgMng.data = window.sessionStorage.data === undefined ? {} : JSON.parse(window.localStorage.data);
             } else {
-                pgMng.data = window.localStorage.data == undefined ? {} : JSON.parse(window.localStorage.data);
+                pgMng.data = window.localStorage.data === undefined ? {} : JSON.parse(window.localStorage.data);
             }
 
 
@@ -122,7 +122,7 @@ $(document).ready(() => {
                     el_btn.html(bt_data.html);
                 }
                 if (bt_data.dismiss === undefined || bt_data.dismiss === true) {
-                    bt_data.attr = bt_data.attr == undefined ? {} : bt_data.attr;
+                    bt_data.attr = bt_data.attr === undefined ? {} : bt_data.attr;
                     bt_data.attr['data-dismiss'] = 'modal';
                 }
 
@@ -167,10 +167,7 @@ $(document).ready(() => {
 
         },
         isApp() {
-            if (typeof chrome === 'undefined' || typeof chrome.app === 'undefined' || typeof chrome.app.window === 'undefined') {
-                return false;
-            }
-            return true;
+            return !(typeof chrome === 'undefined' || typeof chrome.app === 'undefined' || typeof chrome.app.window === 'undefined');
         },
         events: {
             /* Mostra la sezione desiderata e nasconde le altre */
@@ -192,7 +189,7 @@ $(document).ready(() => {
                         $('.anagrafica-section').removeClass('d-none');
                         $('.row-disclaimer-anagrafica').removeClass('d-none');
                         $('.row-form-anagrafica').addClass('d-none');
-                        if (options.type == 'soft') {
+                        if (options.type === 'soft') {
                             $('.row-disclaimer-anagrafica').removeClass('d-none')
                             $('.anagrafica_form .row-iban').addClass('d-none')
                             $('.row-form-anagrafica').addClass('d-none')
@@ -281,7 +278,7 @@ $(document).ready(() => {
                     }
                 }
             },
-            stopTimer(targetCard) {
+            stopTimer() {
                 if (pgMng.staticData.activeTimer.interval !== undefined) {
                     clearInterval(pgMng.staticData.activeTimer.interval);
                 }
@@ -339,7 +336,7 @@ $(document).ready(() => {
                 }
 
             },
-            incrementTimer(seconds = 1) {
+            incrementTimer() {
                 let activeTimer = pgMng.staticData.activeTimer;
                 let elTarget = activeTimer.target;
                 let target = elTarget.data('target') + "";
@@ -378,16 +375,12 @@ $(document).ready(() => {
                 }
                 return hours + ':' + minutes + ':' + seconds;
             },
-            toPercIta(num, precision = 2) {
-                num = Math.round(100 * num * 100, precision) / 100;
-                return num + '%';
-            },
             /* Rende le funzioni per l'app compatibili anche sui browser tradizionali */
             multiApp() {
                 let chromeMulti;
                 if (!pgMng.isApp()) {
                     //chrome.app.window.create
-                    let chromeFire = {
+                    chromeMulti = {
                         'storage': {
                             sync: {
                                 get: (key, ex_function) => {
@@ -401,8 +394,8 @@ $(document).ready(() => {
                         'app': {
                             window: {
                                 create: (URL, options = {}) => {
-                                    options.id = options.id == undefined ? '_blank' : options.id;
-                                    var win = window.open(URL, options.id);
+                                    options.id = options.id === undefined ? '_blank' : options.id;
+                                    let win = window.open(URL, options.id);
                                     win.appdata = {};
                                     win.appdata.data = {};
                                     for (let index in options) {
@@ -417,7 +410,6 @@ $(document).ready(() => {
                             })
                         }
                     };
-                    chromeMulti = chromeFire;
                 } else {
                     chromeMulti = chrome;
                 }
@@ -438,7 +430,7 @@ $(document).ready(() => {
                     }
                 } else {
                     let option_id = id_target === undefined ? '_blank' : id_target;
-                    var win = window.open(url, option_id);
+                    let win = window.open(url, option_id);
                     win.appdata = {};
                     win.appdata.data = {};
                     if (extra !== undefined) {
@@ -468,7 +460,7 @@ $(document).ready(() => {
                     for (let index in win) {
                         if (exception_close !== undefined && exception_close.length > 0) {
                             for (let i in exception_close) {
-                                if (win[index].id != exception_close[i]) {
+                                if (win[index].id !== exception_close[i]) {
                                     win[index].close();
                                 }
                             }
@@ -481,9 +473,9 @@ $(document).ready(() => {
             },
             /* Verifica la presenza di un valore in un array */
             inArray(needle, haystack) {
-                var length = haystack.length;
-                for (var i = 0; i < length; i++) {
-                    if (haystack[i] == needle) return true;
+                let length = haystack.length;
+                for (let i = 0; i < length; i++) {
+                    if (haystack[i] === needle) return true;
                 }
                 return false;
             },
@@ -528,7 +520,7 @@ $(document).ready(() => {
         },
     };
 
-    if (mydebug = 'debug') {
+    if (mydebug === 'debug') {
         mydebug = pgMng;
     }
 
@@ -552,7 +544,6 @@ $(document).ready(() => {
         target.removeClass('t-start-btn').addClass('t-stop-btn').find('.t-str').html('Stop');
 
         targetCard.addClass('active');
-        ;
 
         pgMng.events.startTimer(targetCard);
     });
@@ -565,7 +556,7 @@ $(document).ready(() => {
         $('.timer-card').removeClass('active');
         $('.t-stop-btn').addClass('t-start-btn').removeClass('t-stop-btn').find('.t-str').html('Start');
 
-        pgMng.events.stopTimer(targetCard);
+        pgMng.events.stopTimer();
     });
 
     //Event Reset timer
@@ -583,7 +574,7 @@ $(document).ready(() => {
     });
 
     //Event Add timer
-    $('.main-section').on('click', '.t-add-btn', (e) => {
+    $('.main-section').on('click', '.t-add-btn', () => {
         pgMng.events.addTimer({}, true);
     });
 
