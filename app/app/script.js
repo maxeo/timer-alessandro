@@ -248,15 +248,29 @@ $(document).ready(() => {
                 cardTimer.find('.t-label').val(timerData.label);
                 cardTimer.find('.t-timer').html(pgMng.utility.toHHMMSS(timerData.value));
 
-                //console.log(timers[i]);
-
             },
             startTimer(targetCard) {
                 if (pgMng.staticData.activeTimer.interval !== undefined) {
                     clearInterval(pgMng.staticData.activeTimer.interval);
                 }
-                pgMng.staticData.activeTimer.interval = setInterval(pgMng.events.incrementTimer, 1000);
-                pgMng.staticData.activeTimer.target = targetCard;
+                let activeTimer = pgMng.staticData.activeTimer;
+                let target = targetCard.data('target') + ""
+
+
+                activeTimer.target = targetCard;
+                activeTimer.dateStart = new Date();
+                activeTimer.value = pgMng.events.getTimer(target).value;
+
+                activeTimer.interval = setInterval(pgMng.events.incrementTimer, 1000);
+            },
+            getTimer(target) {
+                let timers = pgMng.get('timers');
+                for (let index in timers) {
+                    let timer = timers[index];
+                    if (timer.target + "" === target) {
+                        return timer;
+                    }
+                }
             },
             stopTimer(targetCard) {
                 if (pgMng.staticData.activeTimer.interval !== undefined) {
@@ -317,20 +331,16 @@ $(document).ready(() => {
 
             },
             incrementTimer(seconds = 1) {
-                let elTarget = pgMng.staticData.activeTimer.target;
+                let activeTimer = pgMng.staticData.activeTimer;
+                let elTarget = activeTimer.target;
                 let target = elTarget.data('target') + "";
-                let timers = pgMng.get('timers');
                 let val_timer = 0;
+                let timer = pgMng.events.getTimer(target);
 
-                for (let index in timers) {
-                    let timer = timers[index];
-                    if (timer.target + "" === target) {
-                        timer.value++;
-                        val_timer = timer.value;
-                        pgMng.updateStorage();
-                        break;
-                    }
-                }
+                timer.value = activeTimer.value + (new Date() * 1 - activeTimer.dateStart * 1) / 1000;
+
+                val_timer = timer.value;
+                pgMng.updateStorage();
 
 
                 elTarget.find('.t-timer').html(pgMng.utility.toHHMMSS(val_timer));
@@ -527,7 +537,6 @@ $(document).ready(() => {
     $('.timers_container-main').on('click', '.t-start-btn', (e) => {
         let target = $(e.currentTarget);
         let targetCard = target.parents('.timer-card');
-        console.log(e)
 
         $('.timer-card').removeClass('active');
         $('.t-stop-btn').addClass('t-start-btn').removeClass('t-stop-btn').find('.t-str').html('Start');
