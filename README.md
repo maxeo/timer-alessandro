@@ -1,7 +1,7 @@
 # timer-alessandro
 
-##DEMO
+## DEMO
 https://maxeo.github.io/timer-alessandro/demo/
 
-##CRX
+## CRX
 https://github.com/maxeo/timer-alessandro/raw/master/app.crx
