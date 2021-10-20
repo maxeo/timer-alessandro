@@ -560,31 +560,33 @@ $(document).ready(() => {
     });
 
     //Event Change timer
-    $('.timers_container-main').on('dblclick', '.t-timer', (e) => {
-        let target = $(e.currentTarget);
-        let targetCard = target.parents('.timer-card');
+    $('.timers_container-main').on("click", '.t-timer', (e) => {
+        /*Double Click */
+        if ((new Date().getTime()) < 800) {
 
-        pgMng.utility.confirm((e) => {
-            let newTimeInput = $('#confirm').find('.new-time');
-            if (!newTimeInput.is(':valid')) {
-                newTimeInput.addClass('is-invalid')
-            } else {
-                pgMng.events.setTimer(pgMng.utility.fromHHMMSS(newTimeInput.val()), targetCard, true);
-                $('#confirm').modal('hide');
-            }
+            let target = $(e.currentTarget);
+            let targetCard = target.parents('.timer-card');
 
-        }, {
-            message:
-              '<p>Change timer?</p>' +
-              '<input pattern="[0-9]+:[0-9]{2}:[0-9]{2}"  type="text" class="form-control new-time">' +
-              '<div class="invalid-feedback">Correct format is 00:00:00</div>',
-            confirmName: 'Change',
-            title: 'Change',
-            confirmClass: 'btn btn-info'
-        }, false);
-        $('#confirm').find('.new-time').val(target.text());
+            pgMng.utility.confirm((e) => {
+                let newTimeInput = $('#confirm').find('.new-time');
+                if (!newTimeInput.is(':valid')) {
+                    newTimeInput.addClass('is-invalid')
+                } else {
+                    pgMng.events.setTimer(pgMng.utility.fromHHMMSS(newTimeInput.val()), targetCard, true);
+                    $('#confirm').modal('hide');
+                }
 
-        //pgMng.events.startTimer(targetCard);
+            }, {
+                message:
+                  '<p>Change timer?</p>' +
+                  '<input pattern="[0-9]+:[0-9]{2}:[0-9]{2}"  type="text" class="form-control new-time">' +
+                  '<div class="invalid-feedback">Correct format is 00:00:00</div>',
+                confirmName: 'Change',
+                title: 'Change',
+                confirmClass: 'btn btn-info'
+            }, false);
+            $('#confirm').find('.new-time').val(target.text());
+        }
     });
 
     //Event Stop timer
