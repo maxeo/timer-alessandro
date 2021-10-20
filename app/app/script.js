@@ -267,7 +267,7 @@ $(document).ready(() => {
                 activeTimer.dateStart = new Date();
                 activeTimer.value = pgMng.events.getTimer(target).value;
 
-                activeTimer.interval = setInterval(pgMng.events.incrementTimer, 1000);
+                activeTimer.interval = setInterval(pgMng.events.incrementTimer, 500);
             },
             getTimer(target) {
                 let timers = pgMng.get('timers');
@@ -339,20 +339,24 @@ $(document).ready(() => {
             incrementTimer() {
                 let activeTimer = pgMng.staticData.activeTimer;
                 let elTarget = activeTimer.target;
-                let target = elTarget.data('target') + "";
-                let val_timer = 0;
+                pgMng.events.setTimer(activeTimer.value + (new Date() * 1 - activeTimer.dateStart * 1) / 1000, elTarget);
+            },
+            setTimer(newTimer, targetCard, fixDate = false) {
+                let target = targetCard.data('target') + "";
                 let timer = pgMng.events.getTimer(target);
 
-                timer.value = activeTimer.value + (new Date() * 1 - activeTimer.dateStart * 1) / 1000;
+                if (fixDate && pgMng.staticData.activeTimer.target !== undefined) {
+                    if (pgMng.staticData.activeTimer.target.data('target') + '' === target + '') {
+                        pgMng.staticData.activeTimer.dateStart = new Date();
+                        pgMng.staticData.activeTimer.value = newTimer;
 
-                val_timer = timer.value;
+                    }
+                }
+
+                timer.value = newTimer;
                 pgMng.updateStorage();
-
-
-                elTarget.find('.t-timer').html(pgMng.utility.toHHMMSS(val_timer));
+                targetCard.find('.t-timer').html(pgMng.utility.toHHMMSS(newTimer));
             },
-
-
         },
         utility: {
             /* Converte un numero in una stringa numerica nel formato ore:minuti:secondi */
@@ -374,6 +378,10 @@ $(document).ready(() => {
                     seconds = "0" + seconds;
                 }
                 return hours + ':' + minutes + ':' + seconds;
+            },
+            fromHHMMSS(time) {
+                let t_time = time.split(':')
+                return t_time[0] * 60 * 60 + t_time[1] * 60 + t_time[2] * 1;
             },
             /* Rende le funzioni per l'app compatibili anche sui browser tradizionali */
             multiApp() {
@@ -480,7 +488,7 @@ $(document).ready(() => {
                 return false;
             },
             //Modal confirm
-            confirm(f_run, modaldata = {}) {
+            confirm(f_run, modaldata = {}, close = true) {
                 let modalConfirm = $('#confirm');
                 let event_btn = modalConfirm.find('.confirm-event');
 
@@ -513,6 +521,9 @@ $(document).ready(() => {
                 event_btn.off('click')
                   .on('click', e => {
                       f_run(e);
+                      if (close) {
+                          modalConfirm.modal('hide');
+                      }
                   });
 
 
@@ -546,6 +557,34 @@ $(document).ready(() => {
         targetCard.addClass('active');
 
         pgMng.events.startTimer(targetCard);
+    });
+
+    //Event Change timer
+    $('.timers_container-main').on('dblclick', '.t-timer', (e) => {
+        let target = $(e.currentTarget);
+        let targetCard = target.parents('.timer-card');
+
+        pgMng.utility.confirm((e) => {
+            let newTimeInput = $('#confirm').find('.new-time');
+            if (!newTimeInput.is(':valid')) {
+                newTimeInput.addClass('is-invalid')
+            } else {
+                pgMng.events.setTimer(pgMng.utility.fromHHMMSS(newTimeInput.val()), targetCard, true);
+                $('#confirm').modal('hide');
+            }
+
+        }, {
+            message:
+              '<p>Change timer?</p>' +
+              '<input pattern="[0-9]+:[0-9]{2}:[0-9]{2}"  type="text" class="form-control new-time">' +
+              '<div class="invalid-feedback">Correct format is 00:00:00</div>',
+            confirmName: 'Change',
+            title: 'Change',
+            confirmClass: 'btn btn-info'
+        }, false);
+        $('#confirm').find('.new-time').val(target.text());
+
+        //pgMng.events.startTimer(targetCard);
     });
 
     //Event Stop timer
@@ -589,6 +628,7 @@ $(document).ready(() => {
 
 
     });
+
 
     //Event Delete timer
     $('.timers_container-main').on('click', '.t-delete-btn', (e) => {
