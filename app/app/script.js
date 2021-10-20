@@ -322,14 +322,14 @@ $(document).ready(() => {
                 targetCard.remove();
 
             },
-            changeLabel(targetCard) {
+            changeLabel(targetCard, label) {
                 let dataTarget = targetCard.data('target');
 
                 let timers = pgMng.get('timers');
                 for (let index in timers) {
                     let timer = timers[index];
                     if (timer.target + "" === dataTarget + '') {
-                        timer.label = targetCard.find('.t-label').val();
+                        timer.label = label;
                         pgMng.updateStorage();
                         break;
                     }
@@ -583,7 +583,9 @@ $(document).ready(() => {
         let target = $(e.currentTarget);
         let targetCard = target.parents('.timer-card');
 
-        pgMng.events.changeLabel(targetCard);
+        targetCard.find('.t-label').val(target.val());
+
+        pgMng.events.changeLabel(targetCard, target.val());
 
 
     });
