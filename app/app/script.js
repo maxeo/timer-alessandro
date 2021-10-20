@@ -562,7 +562,7 @@ $(document).ready(() => {
     //Event Change timer
     $('.timers_container-main').on("click", '.t-timer', (e) => {
         /*Double Click */
-        if ((new Date().getTime()) < 800) {
+        if ((new Date().getTime()) < $(this).data('dbclick') + 800) {
 
             let target = $(e.currentTarget);
             let targetCard = target.parents('.timer-card');
@@ -586,6 +586,8 @@ $(document).ready(() => {
                 confirmClass: 'btn btn-info'
             }, false);
             $('#confirm').find('.new-time').val(target.text());
+        } else {
+            $(this).data('dbclick', new Date() * 1);
         }
     });
 
