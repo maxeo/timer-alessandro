@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "webserver.docker.local",
+    "host": "webserver",
+    "port": "8080",
+    "https_only": true,
+    "certbot": false,
+    "certbot_mail": "certbot@maxeo.net",
+    "alias": []
+  }
+]

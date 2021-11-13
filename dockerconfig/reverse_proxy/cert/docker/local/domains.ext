@@ -5,3 +5,6 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = localhost
 DNS.2 = local.docker
+DNS.3 = docker.local
+DNS.4 = *.docker.local
+DNS.5 = *.local.docker

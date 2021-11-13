@@ -13,7 +13,7 @@ else
   rm -rf /dockerconfig/cert/local/
   mkdir /dockerconfig/cert/local/
   cd /dockerconfig/cert/local/
-  echo -e "authorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nsubjectAltName = @alt_names\n[alt_names]\nDNS.1 = localhost\nDNS.2 = local.docker">domains.ext
+  echo -e "authorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nsubjectAltName = @alt_names\n[alt_names]\nDNS.1 = localhost\nDNS.2 = local.docker\nDNS.3 = docker.local\nDNS.4 = *.docker.local\nDNS.5 = *.local.docker">domains.ext
   openssl req -new -nodes -newkey rsa:2048 -keyout localhost.key -out localhost.csr -subj "/C=IT/ST=Italy/L=Florence/O=localwebsite/CN=localhost.local"
   openssl x509 -req -sha256 -days 1024 -in localhost.csr -CA ../authority/RootCA.pem -CAkey ../authority/RootCA.key -CAcreateserial -extfile domains.ext -out localhost.crt
   echo -e "Nuova autorita' generata\n"
